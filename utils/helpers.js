@@ -52,7 +52,7 @@ export function calculateDirection (heading) {
             max: 50,
             unit: 'miles',
             step: 1,
-            type: 'steppers',
+            type: 'stepper',
             getIcon() {
                 return (
                     <View>
@@ -70,7 +70,7 @@ export function calculateDirection (heading) {
             max: 100,
             unit: 'miles',
             step: 1,
-            type: 'steppers',
+            type: 'stepper',
             getIcon() {
                 return (
                     <View>
@@ -88,7 +88,7 @@ export function calculateDirection (heading) {
             max: 9900,
             unit: 'meters',
             step: 100,
-            type: 'steppers',
+            type: 'stepper',
             getIcon() {
                 return (
                     <View>
