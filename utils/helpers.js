@@ -143,3 +143,9 @@ export function calculateDirection (heading) {
         ? info
         : info[metric]
   }
+
+  export function getDailyReminderValue () {
+      return {
+          today: "Don't forget to log your data today!"
+      }
+  }
