@@ -11,9 +11,8 @@ function entries (state={}, action) {
             return {
                 ...state,
                 ...action.entry,
-                }
             }
-        default: 
+        default : 
             return state
     }
 }
