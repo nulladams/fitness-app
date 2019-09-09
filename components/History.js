@@ -8,7 +8,7 @@ import UdaciFitnessCalendar from 'udacifitness-calendar'
 import { white } from '../utils/colors'
 import DateHeader from './DateHeader'
 import MetricCard from './MetricCard'
-import { AppLoaging, AppLoading } from 'expo'
+import { AppLoading } from 'expo'
 
 class History extends Component {
     state = {
