@@ -7,9 +7,11 @@ import reducer from './reducers'
 import History from './components/History'
 import { createAppContainer } from 'react-navigation'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
+import { createStackNavigator } from 'react-navigation-stack'
 import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import { purple, white } from './utils/colors'
 import Constants from 'expo-constants'
+import EntryDetail from './components/EntryDetail'
 
 function FitStatusBar ({ backgroundColor, ...props }) {
   return (
@@ -54,7 +56,22 @@ const TabNavigator = createBottomTabNavigator ({
   }
 })
 
-const AppContainer = createAppContainer(TabNavigator)
+const MainNavigator = createStackNavigator ({
+  Home: {
+    screen: TabNavigator,
+  },
+  EntryDetail: {
+    screen: EntryDetail,
+    navigationOptions: {
+      headerTintColor: white,
+      headerStyle: {
+        backgroundColor: purple,
+      }
+    }
+  }
+})
+
+const AppContainer = createAppContainer(MainNavigator)
 
 
 export default function App() {
