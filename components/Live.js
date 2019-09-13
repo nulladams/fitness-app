@@ -32,11 +32,23 @@ export default class Live extends Component {
                 }))
             })
     }
-    askPermission = () => {
+    askPermission =  async () => {
+        try {
+            let { status } = await Permissions.askAsync(Permissions.LOCATION)
 
+            if (status === 'granted') {
+                return this.setLocation()
+            }
+
+            this.setState(() => ({
+                status
+            }))
+        } catch(error) {
+            console.warn('error asking Location permisssion: ', error)
+        }
     }
     setLocation = () => {
-        Location.watchPositionAysnc({
+        Location.watchPositionAsync({
             enableHighAccuracy: true,
             timeInterval: 1,
             distanceInterval: 1,
