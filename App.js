@@ -1,5 +1,5 @@
-import React from 'react'
-import { View, Platform, StatusBar } from 'react-native'
+import React, { Component } from 'react'
+import { View, Platform, StatusBar, Text } from 'react-native'
 import AddEntry from './components/AddEntry'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -13,6 +13,7 @@ import { purple, white } from './utils/colors'
 import Constants from 'expo-constants'
 import EntryDetail from './components/EntryDetail'
 import Live from './components/Live'
+import { setLocalNotification } from './utils/helpers'
 
 function FitStatusBar ({ backgroundColor, ...props }) {
   return (
@@ -81,14 +82,18 @@ const MainNavigator = createStackNavigator ({
 
 const AppContainer = createAppContainer(MainNavigator)
 
-
-export default function App() {
-  return (
-    <Provider store={createStore(reducer)}>
-      <View style={{ flex: 1 }}>
-        <FitStatusBar backgroundColor={purple}  barStyle='light-content' />
-        <AppContainer />
-      </View>
-    </Provider>
-  )
+export default class App extends Component  {
+  componentDidMount() {
+    setLocalNotification()    
+  }
+  render() {
+    return (
+      <Provider store={createStore(reducer)}>
+        <View style={{ flex: 1 }}>
+          <FitStatusBar backgroundColor={purple}  barStyle='light-content' />
+          <AppContainer />
+        </View>
+      </Provider>
+    )
+  }
 }

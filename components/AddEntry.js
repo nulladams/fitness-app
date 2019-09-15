@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native'
 import { 
-    getMetricDataInfo, 
+    getMetricMetaInfo, 
     timeToString, 
     getDailyReminderValue 
 } from '../utils/helpers'
@@ -36,7 +36,7 @@ class AddEntry extends Component {
         eat: 0,
     }
     increment = (metric) => {
-        const { max, step } = getMetricDataInfo(metric)
+        const { max, step } = getMetricMetaInfo(metric)
 
         this.setState((currState) => {
             const count = currState[metric] + step
@@ -48,7 +48,7 @@ class AddEntry extends Component {
         })
     }
     decrement = (metric) => {
-        const { step } = getMetricDataInfo(metric)
+        const { step } = getMetricMetaInfo(metric)
         this.setState((currState) => {
             const count = currState[metric] - step
 
@@ -100,7 +100,7 @@ class AddEntry extends Component {
         }))
     }
     render() {
-        const metaInfo = getMetricDataInfo()
+        const metaInfo = getMetricMetaInfo()
 
         if (this.props.alreadyLogged) {
             return (

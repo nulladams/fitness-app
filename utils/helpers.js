@@ -1,7 +1,11 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, AsyncStorage } from 'react-native'
 import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { white, red, orange, blue, lightPurp, pink } from './colors'
+import * as Permissions from 'expo-permissions'
+import { Notifications } from 'expo'
+
+const NOTIFICATION_KEY = 'Fitness:notifications'
 
 export function isBetween (num, x, y) {
     if (num >= x && num <= y) {
@@ -39,27 +43,27 @@ export function calculateDirection (heading) {
     return direction
 }
   
-  export function timeToString (time = Date.now()) {
+export function timeToString (time = Date.now()) {
     const date = new Date(time)
     const todayUTC = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()))
     return todayUTC.toISOString().split('T')[0]
-  }
+}
 
-  const styles = StyleSheet.create({
-      iconContainer: {
-          padding: 5,
-          borderRadius: 8,
-          width: 50,
-          height: 50,
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginRight: 20,
-      }
-  })
+const styles = StyleSheet.create({
+    iconContainer: {
+        padding: 5,
+        borderRadius: 8,
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 20,
+    }
+})
 
-  export function getMetricDataInfo (metric) {
-      const info = {
-          run: {
+export function getMetricMetaInfo (metric) {
+    const info = {
+        run: {
             displayName: 'Run',
             max: 50,
             unit: 'miles',
@@ -75,9 +79,9 @@ export function calculateDirection (heading) {
                         />
                     </View>
                 )
-            }
-          },
-          bike: {
+            },
+        },
+        bike: {
             displayName: 'Bike',
             max: 100,
             unit: 'miles',
@@ -94,8 +98,8 @@ export function calculateDirection (heading) {
                     </View>
                 )
             }
-          },
-          swim: {
+        },
+        swim: {
             displayName: 'Swim',
             max: 9900,
             unit: 'meters',
@@ -112,8 +116,8 @@ export function calculateDirection (heading) {
                     </View>
                 )
             }
-          },
-          sleep: {
+        },
+        sleep: {
             displayName: 'Sleep',
             max: 24,
             unit: 'hours',
@@ -130,8 +134,8 @@ export function calculateDirection (heading) {
                     </View>
                 )
             }
-          },
-          eat: {
+        },
+        eat: {
             displayName: 'Eat',
             max: 10,
             unit: 'rating',
@@ -148,16 +152,79 @@ export function calculateDirection (heading) {
                     </View>
                 )
             }
-          },
-      }
+        },
+    }
 
-      return typeof metric === 'undefined'
-        ? info
-        : info[metric]
-  }
+    return typeof metric === 'undefined'
+    ? info
+    : info[metric]
+}
 
-  export function getDailyReminderValue () {
-      return {
-          today: "Don't forget to log your data today!"
-      }
-  }
+export function getDailyReminderValue () {
+    return {
+        today: "Don't forget to log your data today!"
+    }
+}
+
+export function clearLocalNotification () {
+    return AsyncStorage.removeItem(NOTIFICATION_KEY)
+        .then(Notifications.cancelAllScheduledNotificationsAsync)
+}
+
+function createNotification () {
+    return {
+        title: "Log your stats!",
+        body: "Don't forget to log your stats for today",
+        ios: {
+            sound: true
+        },
+        android: {
+            sound: true,
+            priority: 'high',
+            sticky: false,
+            vibrate: true,
+        }
+    }
+}
+
+export async function setLocalNotification () {
+    let status = await Permissions.askAsync(Permissions.NOTIFICATIONS)
+    console.log("status await", status)
+    AsyncStorage.getItem(NOTIFICATION_KEY)
+        .then(JSON.parse)
+        .then((data) => {
+            console.log("Entrei no storage")
+            console.log("data: ", data)
+            if (data === null) {
+                console.log("Entrei null")
+                Permissions.askAsync(Permissions.NOTIFICATIONS)
+                    .then(({ status }) => {
+                        console.log("status", status)
+                        if (status === 'granted') {
+                            Notifications.cancelAllScheduledNotificationsAsync()
+
+                            console.log("Permissions granted")
+
+                            let tomorrow = new Date()
+                            tomorrow.setDate(tomorrow.getDate() + 1)
+                            tomorrow.setHours(17)
+                            tomorrow.setMinutes(0)
+
+                            console.log("time", tomorrow)
+
+                            Notifications.scheduleLocalNotificationAsync(
+                                createNotification(),
+                                {
+                                    time: tomorrow,
+                                    repeat: 'day'
+                                }
+                            )
+
+                            AsyncStorage.setItem(NOTIFICATION_KEY, JSON.stringify(true))
+                        }
+                    })
+                console.log("passei")
+            }
+        })
+}
+
