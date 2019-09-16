@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, Platform, StyleSheet } from 'react-native
 import { 
     getMetricMetaInfo, 
     timeToString, 
-    getDailyReminderValue 
+    getDailyReminderValue,
+    clearLocalNotification,
+    setLocalNotification
 } from '../utils/helpers'
 import FitnessSlider from './FitnessSlider'
 import FitnessStepper from './FitnessStepper'
@@ -80,6 +82,9 @@ class AddEntry extends Component {
             sleep: 0,
             eat: 0,            
         }))
+
+        clearLocalNotification()
+            .then(setLocalNotification)
 
         this.toHome()
     }
